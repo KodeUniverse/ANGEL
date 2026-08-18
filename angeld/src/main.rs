@@ -1,29 +1,33 @@
+use angel_protocol::{MsgType, UnknownMsgType};
 use std::{
-    fs,
-    io::{ErrorKind, Read, Result},
+    fs, io,
+    io::{ErrorKind, Read},
     os::unix::net::{Incoming, UnixListener, UnixStream},
     thread,
 };
 
-fn handle_client(mut stream: UnixStream) -> Result<()> {
+fn handle_client(mut stream: UnixStream) -> io::Result<()> {
     let mut msg_type_buf: [u8; 1] = [0u8];
     stream.read_exact(&mut msg_type_buf)?;
-    let msg_type = msg_type_buf[0];
+    let msg_type: MsgType = msg_type_buf[0].try_into().unwrap_or(MsgType::Error);
     match msg_type {
-        0 => {
+        MsgType::AiPrompt => {
             println!("AI Prompt detected.")
         }
-        1 => {
+        MsgType::FunctionCall => {
             println!("Function call detected.")
         }
-        _ => {
-            println!("something else detected.")
+        MsgType::Info => {
+            println!("Info detected.")
+        }
+        MsgType::Error => {
+            println!("Error detected.")
         }
     }
     Ok(())
 }
 
-fn main() -> Result<()> {
+fn main() -> io::Result<()> {
     let uid = users::get_current_uid();
     let socket_path = format!("/run/user/{uid}/angeld");
     if let Err(error) = fs::remove_file(&socket_path) {

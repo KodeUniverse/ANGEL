@@ -10,6 +10,7 @@ version = "0.1.0"
 name = "angelctl"
 version = "0.1.0"
 dependencies = [
+ "angel-protocol",
  "clap",
  "users",
 ]
@@ -18,6 +19,7 @@ dependencies = [
 name = "angeld"
 version = "0.1.0"
 dependencies = [
+ "angel-protocol",
  "users",
 ]
 

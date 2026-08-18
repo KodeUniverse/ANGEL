@@ -4,5 +4,6 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+angel-protocol = { version = "0.1.0", path = "../angel-protocol" }
 clap = { version = "4.6.6", features = ["derive"] }
 users = "0.11.0"

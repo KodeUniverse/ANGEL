@@ -5,6 +5,8 @@ use std::{
     path::PathBuf,
 };
 
+use angel_protocol::{AngelMsg, MsgType};
+
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Cli {
@@ -16,23 +18,6 @@ struct Cli {
 enum Commands {
     Ask(AskArgs),
     Call,
-}
-#[repr(u8)]
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-enum MsgType {
-    AiPrompt = 0,
-    FunctionCall = 1,
-    Info = 2,
-}
-struct AngelCtlMsg<'a> {
-    header: MsgType,
-    body: &'a [u8],
-}
-
-impl<'a> AngelCtlMsg<'a> {
-    fn new(header: MsgType, body: &'a [u8]) -> Self {
-        Self { header, body }
-    }
 }
 #[derive(Args, Debug)]
 struct AskArgs {
@@ -48,7 +33,7 @@ fn connect_to_socket(socket_path: &PathBuf) -> io::Result<UnixStream> {
     UnixStream::connect(socket_path)
 }
 
-fn send_msg(msg: &AngelCtlMsg) -> io::Result<()> {
+fn send_msg(msg: &AngelMsg) -> io::Result<()> {
     let mut stream = connect_to_socket(&socket_path())?;
     let body_buf_len = msg.body.len() as u64;
 
@@ -67,7 +52,7 @@ fn main() {
 
     match &cli.command {
         Commands::Ask(args) => {
-            let msg = AngelCtlMsg::new(MsgType::AiPrompt, args.prompt.as_bytes());
+            let msg = AngelMsg::new(MsgType::AiPrompt, args.prompt.as_bytes());
             send_msg(&msg).unwrap();
         }
         Commands::Call => {}
