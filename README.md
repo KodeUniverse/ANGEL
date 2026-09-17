@@ -3,5 +3,5 @@ A.N.G.E.L. - Adaptive Notification, Guidance &amp; Execution Layer. An AI assist
 
 ## System Design
 
-![ANGEL Design Sketch](./designs/ANGEL-System.png)
+![ANGEL Design Sketch](./designs/ANGEL-system.png)
 
